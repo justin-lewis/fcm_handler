@@ -1,0 +1,6 @@
+lib/firebase/firebase_options.dart
+pubspec.lock
+ios/Podfile.lock
+.metadata
+.flutter-plugins
+.flutter-plugins-dependencies
