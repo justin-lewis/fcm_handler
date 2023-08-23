@@ -1,9 +1,8 @@
 import 'package:fcm_handler/fcm_handler.dart';
-import 'package:fcm_handler/platform/platform_handler.dart';
-import 'package:flutter/material.dart';
 import 'package:fcm_handler_example/firebase/firebase_options.dart';
 import 'package:fcm_handler_example/screen/detail_screen.dart';
 import 'package:fcm_handler_example/screen/home_screen.dart';
+import 'package:flutter/material.dart';
 
 import 'navigation.dart';
 
