@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:fcm_handler/notification/notification_handler.dart';
+import 'package:fcm_handler/platform/android_handler.dart';
+import 'package:fcm_handler/platform/ios_handler.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:fcm_handler/platform/android_handler.dart';
-import 'package:fcm_handler/platform/ios_handler.dart';
-import 'package:fcm_handler/notification/notification_handler.dart';
 
 bool firstOpenApp = true;
 
@@ -37,7 +37,7 @@ Future setupFirebaseHandler() async {
     final isPermissionGranted = await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestPermission();
+        ?.requestNotificationsPermission();
     if (isPermissionGranted == true) {
       await initFirebaseMessagingAndroidHandler();
     }
