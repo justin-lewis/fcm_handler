@@ -19,9 +19,10 @@ GlobalKey<NavigatorState> navigationKey = MyApp.navigatorKey;
 
 Future<dynamic> handleRefreshToken(String token) async {}
 
-void openNotification(Map<String, dynamic> data) {
+bool openNotification(Map<String, dynamic> data) {
   pushPage(navigationKey.currentContext!,
       DetailScreen(notificationId: int.tryParse(data['notificationId']) ?? 0));
+  return true;
 }
 
 class MyApp extends StatelessWidget {

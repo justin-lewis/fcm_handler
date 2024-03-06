@@ -21,7 +21,7 @@ Future setupFirebaseApp(FirebaseOptions options) async {
 Future setupFirebaseHandler() async {
   if (Platform.isIOS) {
     await initNotificationForIOS();
-    final isPermissionGranted = await flutterLocalNotificationsPlugin
+    final isPermissionGranted = await getNotificationPlugin()
         .resolvePlatformSpecificImplementation<
             IOSFlutterLocalNotificationsPlugin>()
         ?.requestPermissions(
@@ -34,7 +34,7 @@ Future setupFirebaseHandler() async {
     }
   } else if (Platform.isAndroid) {
     await initNotificationForAndroid();
-    final isPermissionGranted = await flutterLocalNotificationsPlugin
+    final isPermissionGranted = await getNotificationPlugin()
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.requestNotificationsPermission();
@@ -49,9 +49,13 @@ void handleFirstTimeOpenApp() {
     firstOpenApp = false;
     FirebaseMessaging.instance.getInitialMessage().then((value) {
       if (value != null) {
-        onNotificationTap(
-            isFromTerminate: true, payload: json.encode(value.data));
+        defaultNotificationTapHandler(payload: json.encode(value.data));
       }
     });
   }
+}
+
+Future<void> defaultForegroundMessageHandler(
+    RemoteMessage remoteMessage) async {
+  showLocalNotification(remoteMessage);
 }

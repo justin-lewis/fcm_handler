@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:typed_data';
+
 import 'package:fcm_handler/fcm_handler.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 AndroidNotificationChannel? channel;
-late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin;
 String channelId = "high_importance_channel";
 String channelName = "HighChannel";
 String channelDescription = "High Importance Channel";
@@ -27,12 +28,34 @@ Int64List createVibration() {
   return vibrationPatter;
 }
 
+FlutterLocalNotificationsPlugin getNotificationPlugin() {
+  flutterLocalNotificationsPlugin ??= FlutterLocalNotificationsPlugin();
+  return flutterLocalNotificationsPlugin!;
+}
+
+AndroidNotificationChannel? getChannel() {
+  channel ??= AndroidNotificationChannel(
+    channelId,
+    channelName,
+    description: channelDescription,
+    groupId: channelGroupId,
+    importance: Importance.high,
+    enableLights: true,
+    showBadge: true,
+    enableVibration: true,
+    playSound: true,
+    vibrationPattern: createVibration(),
+    ledColor: const Color.fromARGB(255, 255, 255, 255),
+  );
+  return channel!;
+}
+
 Future<void> initNotificationForIOS() async {
-  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  flutterLocalNotificationsPlugin = getNotificationPlugin();
   const initializationSettingsIOS = DarwinInitializationSettings();
   const initializationSettings =
       InitializationSettings(iOS: initializationSettingsIOS);
-  flutterLocalNotificationsPlugin.initialize(initializationSettings,
+  flutterLocalNotificationsPlugin!.initialize(initializationSettings,
       onDidReceiveNotificationResponse: _onSelectNotification,
       onDidReceiveBackgroundNotificationResponse: _onSelectNotification);
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
@@ -43,34 +66,25 @@ Future<void> initNotificationForIOS() async {
 }
 
 Future<void> initNotificationForAndroid() async {
-  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  flutterLocalNotificationsPlugin = getNotificationPlugin();
   AndroidNotificationChannelGroup androidNotificationChannelGroup =
       AndroidNotificationChannelGroup(channelGroupId, channelGroupName,
           description: channelGroupDescription);
   await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
+      ?.resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannelGroup(androidNotificationChannelGroup);
   final initializationSettingsAndroid =
       AndroidInitializationSettings(notificationIcon);
   final initializationSettings =
       InitializationSettings(android: initializationSettingsAndroid);
-  flutterLocalNotificationsPlugin.initialize(initializationSettings,
+  flutterLocalNotificationsPlugin?.initialize(initializationSettings,
       onDidReceiveNotificationResponse: _onSelectNotification,
       onDidReceiveBackgroundNotificationResponse: _onSelectNotification);
-  channel ??= AndroidNotificationChannel(
-    channelId,
-    channelName,
-    description: channelDescription,
-    groupId: channelGroupId,
-    importance: Importance.high,
-    enableLights: true,
-    vibrationPattern: createVibration(),
-    ledColor: const Color.fromARGB(255, 255, 255, 255),
-  );
+  channel ??= getChannel();
   if (channel != null) {
     await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
+        ?.resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel!);
   }
@@ -82,17 +96,17 @@ Future<void> initNotificationForAndroid() async {
 }
 
 void showLocalNotification(RemoteMessage remoteMessage) {
-  flutterLocalNotificationsPlugin.show(
+  getNotificationPlugin().show(
       notificationId++,
       remoteMessage.notification?.title ?? '',
       remoteMessage.notification?.body ?? '',
       NotificationDetails(
           android: AndroidNotificationDetails(
-        channel!.id,
-        channel!.name,
-        channelDescription: channel!.description,
+        getChannel()!.id,
+        getChannel()!.name,
+        channelDescription: getChannel()!.description,
         enableLights: true,
-        ledColor: channel!.ledColor,
+        ledColor: getChannel()!.ledColor,
         ledOnMs: 1000,
         ledOffMs: 500,
       )),
@@ -100,14 +114,14 @@ void showLocalNotification(RemoteMessage remoteMessage) {
 }
 
 void _onSelectNotification(NotificationResponse response) {
-  onNotificationTap(payload: response.payload);
+  defaultNotificationTapHandler(payload: response.payload);
 }
 
-Future onNotificationTap(
+Future defaultNotificationTapHandler(
     {bool isFromTerminate = false, String? payload}) async {
   if (payload == null) return null;
   try {
-    final response = json.decode(payload) as Map<String, dynamic>;
+    final response = jsonDecode(payload) as Map<String, dynamic>;
     onHandleNotificationOpenCallback?.call(response);
     return response;
   } catch (error) {

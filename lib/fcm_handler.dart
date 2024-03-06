@@ -1,11 +1,20 @@
 library fcm_handler;
 
-export 'platform/platform_handler.dart';
-export 'notification/notification_handler.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
+export 'notification/notification_handler.dart';
+export 'platform/platform_handler.dart';
+
+BackgroundMessageHandler? onHandleBackgroundMessageCallback;
 OnHandleTokenRefreshCallback? onHandleTokenRefreshCallback;
 OnHandleNotificationOpenCallback? onHandleNotificationOpenCallback;
+OnReceivedForegroundNotificationCallback?
+    onReceivedForegroundNotificationCallback;
 
-typedef OnHandleNotificationOpenCallback = void Function(
+typedef OnHandleNotificationOpenCallback = bool Function(
     Map<String, dynamic> payloadData);
+
 typedef OnHandleTokenRefreshCallback = Future<dynamic> Function(String token);
+
+typedef OnReceivedForegroundNotificationCallback = Future<bool> Function(
+    RemoteMessage remoteMessage);
