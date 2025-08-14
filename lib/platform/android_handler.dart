@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 
 Future<void> initFirebaseMessagingAndroidHandler() async {
   if (kDebugMode) {
-    final token = await FirebaseMessaging.instance.getToken();
+    final token = await getFirebaseToken();
     debugPrint("Firebase service token: $token");
   }
   FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) async {

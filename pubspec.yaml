@@ -1,6 +1,6 @@
 name: fcm_handler
 description: A Flutter package that wrap logic for handling logic that show notification and process payload data when user tap on it.
-version: 0.0.1
+version: 0.0.2
 repository: https://github.com/justin-lewis/fcm_handler
 
 environment:
@@ -14,14 +14,14 @@ platforms:
 dependencies:
   flutter:
     sdk: flutter
-  firebase_core: ^3.2.0
-  firebase_messaging: ^15.0.3
-  flutter_local_notifications: ^17.2.1+2
+  firebase_core: ^4.0.0
+  firebase_messaging: ^16.0.0
+  flutter_local_notifications: ^19.4.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^6.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

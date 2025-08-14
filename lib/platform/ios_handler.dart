@@ -5,10 +5,10 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 
 Future<void> initFirebaseMessagingIOSHandler() async {
-  debugPrint(
-      "Firebase DB firebaseToken: ${await FirebaseMessaging.instance.getToken()}");
-  debugPrint(
-      "Firebase service APNS token: ${await FirebaseMessaging.instance.getAPNSToken()}");
+  if (kDebugMode) {
+    debugPrint("Firebase service APNS token: ${await getAPNSToken()}");
+    debugPrint("Firebase DB firebaseToken: ${await getFirebaseToken()}");
+  }
   FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) async {
     debugPrint("Firebase: message recieved");
     await onHandleTokenRefreshCallback?.call(fcmToken);

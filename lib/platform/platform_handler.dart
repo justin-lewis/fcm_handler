@@ -6,6 +6,7 @@ import 'package:fcm_handler/platform/android_handler.dart';
 import 'package:fcm_handler/platform/ios_handler.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 bool firstOpenApp = true;
@@ -52,6 +53,24 @@ void handleFirstTimeOpenApp() {
         defaultNotificationTapHandler(payload: json.encode(value.data));
       }
     });
+  }
+}
+
+Future<String?> getFirebaseToken() async {
+  try {
+    return FirebaseMessaging.instance.getToken();
+  } catch (err) {
+    debugPrint("Error get firebase token");
+    return null;
+  }
+}
+
+Future<String?> getAPNSToken() async {
+  try {
+    return FirebaseMessaging.instance.getAPNSToken();
+  } catch (err) {
+    debugPrint("Error get APNS token");
+    return null;
   }
 }
 
